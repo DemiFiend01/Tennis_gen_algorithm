@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    environment:
+      - DISPLAY=host.docker.internal:0
+      - SDL_VIDEODRIVER=x11
+      - LIBGL_ALWAYS_INDIRECT=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    network_mode: host
