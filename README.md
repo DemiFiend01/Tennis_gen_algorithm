@@ -9,10 +9,10 @@ https://sourceforge.net/projects/vcxsrv/
 
 ## Running the simulation
  - Run 'docker build -t tennis-app .' then 'docker compose up' to first run the simulation
- - After changing the code, rebuild with 'docker --no-cache -t tennis-app .'
+ - After changing the code, rebuild with 'docker build --no-cache -t tennis-app .'
 
  ## TO-DO:
 - [x] Create the repository
 - [ ] Learn more about the algorithm
-- [ ] Write the first report
+- [x] Write the first report
 - [ ] Actually code
