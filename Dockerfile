@@ -15,6 +15,7 @@ RUN apt-get update && apt-get install -y \
     libgl1 \
     libglib2.0-0 \
     libx11-6 \
+    git-all \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install pygame
@@ -33,7 +34,8 @@ RUN adduser \
 
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
-    python -m pip install -r requirements.txt
+    python -m pip install -r requirements.txt && \
+    python -m pip install git+http://github.com/mila-iqia/atari-representation-learning.git
 
     # Switch to the non-privileged user to run the application.
 USER appuser
