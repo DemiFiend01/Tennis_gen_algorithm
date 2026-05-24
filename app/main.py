@@ -20,6 +20,6 @@ def test():
 if __name__ == '__main__':
     #tutorial = Tutorial()
     #tutorial.run()
-    tennis_playable()
+    #tennis_playable()
 
-    #test()
+    test()
