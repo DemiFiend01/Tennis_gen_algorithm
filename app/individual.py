@@ -24,7 +24,7 @@ ball_dir_y
 '''
 
 class Individual:
-    def __init__(self, state, n_h1: int, n_h2: int, n_y: int = 18):
+    def __init__(self, state, n_h1: int = 32, n_h2: int = 16, n_y: int = 18):
       """Initializes an individual in a neural network.
 
       Args:
@@ -41,3 +41,26 @@ class Individual:
       self.n_h1 = n_h1
       self.n_h2 = n_h2
       self.n_y = n_y
+
+      # Weights matrices initialization with the Xavier init.
+      xavier_init = np.sqrt(1/self.n_x)
+      self.W1 = np.random.randn(self.n_x, self.n_h1) * xavier_init
+      self.W2 = np.random.randn(self.n_h1, self.n_h2) * xavier_init
+      self.W3 = np.random.randn(self.n_h2, self.n_y) * xavier_init
+
+    def forward(self):
+       pass
+
+    def eval_fitness(self):
+       pass
+    
+    def select_game_input(self):
+       # Returns 1 input from 18 available game inputs
+       pass
+
+    # For mutation
+    def get_weights(self):
+        pass
+
+    def set_weights(self):
+       pass
