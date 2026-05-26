@@ -42,25 +42,38 @@ class Individual:
       self.n_h2 = n_h2
       self.n_y = n_y
 
+      #Extract the actual state values without labels, but in the genetic_algorithm
+      #because right now we have {'enemy_x': 62, 'enemy_y': 2, 'enemy_score': 0, 'ball_x': 71, 'ball_y': 33, 'player_x': 64, 'player_y': 142, 'player_score': 0}
+
       # Weights matrices initialization with the Xavier init.
       xavier_init = np.sqrt(1/self.n_x)
       self.W1 = np.random.randn(self.n_x, self.n_h1) * xavier_init
       self.W2 = np.random.randn(self.n_h1, self.n_h2) * xavier_init
       self.W3 = np.random.randn(self.n_h2, self.n_y) * xavier_init
 
-    def forward(self):
-       pass
+    def forward(self, new_state):
+       self.state = new_state
+       # Inputs vector multiplication by the first weights matrix
+       h1 = np.maximum(0, self.state @ self.W1 ) # ReLU
+       # First hidden layer matrix multiplication by the second weights matrix
+       h2 = np.maximum(0, h1 @ self.W2) # ReLU
 
-    def eval_fitness(self):
-       pass
-    
-    def select_game_input(self):
-       # Returns 1 input from 18 available game inputs
-       pass
+       # Use softmax as it is best for multivalue outputs 
+       x = h2 @ self.W3
+       e_x = np.exp(x - np.max(x))
+       softmax = e_x / e_x.sum()
+       return int(np.argmax(softmax))
 
     # For mutation
     def get_weights(self):
-        pass
+        # Flatten into one array
+        return np.concatenate([self.W1.ravel(), self.W2.ravel(), self.W3.ravel()])
 
-    def set_weights(self):
-       pass
+    def set_weights(self, flat: np.ndarray):
+       i = 0
+       for name, shape in [('W1', (self.n_x, self.n_h1)),
+                           ('W2', (self.n_h1, self.n_h2)),
+                           ('W3', (self.n_h2, self.n_y))]:
+          size = shape[0] * shape[1]
+          setattr(self, name, flat[i:i + size].reshape(shape))
+          i += size
