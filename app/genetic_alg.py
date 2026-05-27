@@ -135,6 +135,8 @@ class GeneticAlgorithm:
 
         for i in range(500):
             action = individual.forward(new_state=self.game_ram_state)
+            if i % 30 == 0:
+                action = 1
             obs, reward, terminated, truncated, info = env.step(action)
 
             labels = info["labels"]
