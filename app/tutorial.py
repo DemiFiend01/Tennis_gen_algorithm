@@ -3,24 +3,32 @@ import pygad
 import pygad.nn
 import pygad.gann
 
+import pygame 
+import gymnasium as gym
+import FixedAtariWrapper as faw
+
 # Contains the basic tutorial from pygad.
 # The outline of operation will be probably similiar but with modifications.
 
 class Tutorial:
-    def __init__(self):
+    def __init__(self, env : faw.AtariARIWrapper):
+
+        # Envrionment wrapper
+        self.env = env
+
         # Holds the fitness value of the previous generation.
         self.last_fitness = 0
 
         # Preparing the NumPy array of the inputs.
-        self.data_inputs = numpy.array([[2, 5, -3, 0.1],
-                                [8, 15, 20, 13]])
+        #self.data_inputs = numpy.array([[2, 5, -3, 0.1],
+         #                       [8, 15, 20, 13]])
 
         # Preparing the NumPy array of the outputs.
-        self.data_outputs = numpy.array([[0.1, 0.2],
-                                    [1.8, 1.5]])
+        #self.data_outputs = numpy.array([[0.1, 0.2],
+         #                           [1.8, 1.5]])
 
         # The length of the input vector for each sample (i.e. number of neurons in the input layer).
-        num_inputs = self.data_inputs.shape[1]
+        self.num_inputs = len(self.env.get_labels())
 
         # Creating an initial population of neural networks. The return of the initial_population() function holds references to the networks, not their weights. Using such references, the weights of all networks can be fetched.
         num_solutions = 6 # A solution or a network can be used interchangeably.
