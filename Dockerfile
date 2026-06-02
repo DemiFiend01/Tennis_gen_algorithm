@@ -35,6 +35,7 @@ RUN adduser \
 RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt && \
+    python -m pip install "ocatari>=1.2.0" --no-cache-dir && \
     python -m pip install git+http://github.com/mila-iqia/atari-representation-learning.git
 
     # Switch to the non-privileged user to run the application.

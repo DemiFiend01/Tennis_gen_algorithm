@@ -6,6 +6,8 @@ import pygad.gann
 import pygame 
 import gymnasium as gym
 import FixedAtariWrapper as faw
+import time
+from ocatari.core import OCAtari
 
 def map_input_to_action(keys):
     ''' Maps key inputs to Tennis game actions. '''
@@ -78,9 +80,10 @@ def tennis_playable():
 
     # 1. Init the environment
 
-    env = faw.FixedAtariWrapper(gym.make('TennisNoFrameskip-v4', render_mode="human"))
+    env = OCAtari("Tennis-v4", mode="ram", hud=True, render_mode="human")
     obs, info = env.reset()
 
+    i = 0
     while True:
 
         # 2. Read pygame events
@@ -99,7 +102,21 @@ def tennis_playable():
         # 4. Pass action into the game
 
         obs, reward, terminated, truncated, info = env.step(action)
-        labels = info["labels"]
+        #labels = info["labels"]
+
+        i = (i + 1) % 30
+        if i == 0:
+            for obj in env.objects:
+                if obj.category == 'Ball':
+                    pass #print(f"Ball: ({obj.x}, {obj.y})")
+                elif obj.category == 'Player':
+                    print(f"Player: ({obj.x}, {obj.y})")
+                elif obj.category == "Enemy":
+                    pass#print(f"Enemy: ({obj.x}, {obj.y})")
+
+            RAM = env.get_ram()
+            #print(f"Score: ({RAM[69]}, {RAM[70]})")
+        
         #print(f"Reward: {reward}, Terminated: {terminated}, Truncated: {truncated}, Info: {info}")
 
         # 5. Update pygame clock

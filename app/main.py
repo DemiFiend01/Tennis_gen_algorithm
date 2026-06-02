@@ -38,8 +38,11 @@ def test():
     env.close()
 
 if __name__ == '__main__':
-    genAlg = GeneticAlgorithm(no_inv=30, no_gen=10)
+    genAlg = GeneticAlgorithm(no_inv=4, no_gen=4)
     genAlg.run()
+
+    genAlg.ga_instance.plot_fitness()
+   
     #tutorial = Tutorial()
     #tutorial.run()
     #tennis_playable()

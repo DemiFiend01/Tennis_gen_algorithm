@@ -13,6 +13,18 @@ https://sourceforge.net/projects/vcxsrv/
 
  ## TO-DO:
 - [x] Create the repository
-- [ ] Learn more about the algorithm
+- [x] Learn more about the algorithm
 - [x] Write the first report
-- [ ] Actually code
+- [x] Actually code
+- [x] Create skeleton of the algorithm
+- [x] Dummy fitness function
+
+- [ ] Fitness function
+      - [ ] Track metrics
+      - [ ] Prepare pattern
+      - [ ] Create chart of fitness values over time
+      - [ ] Implement whole function
+
+- [ ] Selection function
+      - [] Research it more
+      
