@@ -10,6 +10,12 @@ import time
 import random
 from ocatari.core import OCAtari
 from ocatari.ram.game_objects import GameObject
+import math
+
+from OCWrapper import OCWrapper
+from pathlib import Path
+
+INDIVIDUALS_PATH = Path("/tmp/best_fits")
 
 # Fitness function notes:
 # Statistics to track:
@@ -17,124 +23,94 @@ from ocatari.ram.game_objects import GameObject
 
 # - Won / lost
 
-# 0. Perform 10 
-#    * Main loop
-#      - Make prediction of the next move
-#      - Extract current ram
-#      - Compare with previous
-#      - Evaluate statistics
-#      - After each game evaluate intermediary fitness
-# 1. Measures
-#    - If ball passes players x and delta_y is high -> big penalty
-#    - Count number of consecutive hits -> means that agent is winning a service each time
-#    - Track movements of a player -> penalty for sitting still
-#    - When ball is travelling towards our site -> check rate of distance change between player & ball, the higher, the better
-#    - Ratio points_scored / lost_points -> penalize low values
+#-1. (ok) Create env in the 
+# 0. (ok) Fewer outputs
+# 1. (ok) Less randomness in actions
+# 2. (ok) Calculate distance between player and ball always when ball is on player side
+# 3. Successfull hits -> every time balls movement direction inverted when near player
+# 4. (ok) Number of survived frames -> modify to count frames per game 
 
-# max fitness: 1.0
-# Conditions:
-# - (ok) Distance between player and ball when lost
-# - Direction of player movement when lost
-# - Number of consecutive hits (the higher the better)
-# - Position distribution on x, y axes (the flatter, the better)
-# - When ball travelling to our site, differential (reate of change) of distance change (negated), the higher the better
-# - (ok) Ratio points_scored / points_lost -> the higher the better
-
-# Old fitness function:
-'''
-total_inv_reward = 0.0
-prev_ball_x, prev_ball_y = 0,0
-
-for i in range(1000):
-    action = individual.forward(new_state=self.game_ram_state)
-    if i % 30 == 0:
-        action = 1
-    obs, reward, terminated, truncated, info = self.env.step(action)
-
-    labels = info["labels"]
-    # print(labels)
-    # print(f"Reward: {reward}, Terminated: {terminated}, Truncated: {truncated}, Info: {labels}")
-    # print(self.game_ram_state)
-
-    self.game_ram_state = self.extract_game_info(labels=labels, 
-                                                    prev_ball_x=prev_ball_x, 
-                                                    prev_ball_y=prev_ball_y)
-    prev_ball_x = labels["ball_x"]
-    prev_ball_y = labels["ball_y"]
-
-    distance = abs(labels["player_x"] - labels["ball_x"]) + abs(labels["player_y"] - labels["ball_y"])
-    proximity_reward = -distance / 255.0
-
-    total_inv_reward += reward +  20 * proximity_reward
-    if terminated or truncated:
-        print("terminated or truncated")
-        break
-
-return total_inv_reward
-'''
-
-
-'''To Do:
-- Add Selection methods:
-- Choose one winner and select the best state.
-- include a loop from pygad
-'''
+# 5. Modify the fitenss function ->
+#    - Add flags to GeneticAlgorithm
+#       - Each flag is unlocked after achieving some fitness function threshold or number of generations 
+#       - Flags: ball_player_dist, total_survived_frames, total_number_of_hits, 
+#    - Activate new elements of fitness function gradually
+#   - Each new metric unlocked after 8-10 generations
 
 class GeneticAlgorithm:
+    NN_X = 11 # Number of inputs for single individual
+    NN_Y = 10 # Number of outputs of a single individual
 
-    PL_RAM_IDX = 69
-    EN_RAM_IDX = 70
-    MAX_BALL_PLAYER_DIST = 200 # 199 actually but shhhhh * ~ - 
-
-    def __init__(self, no_inv: int, no_gen, max_fit : float = 15.0, threads : int = 1):
-        """Initialises the genetic algorithm
+    def __init__(self, no_inv : int,
+                       no_gen : int,
+                       parents_frac  : float = 0.3,
+                       max_fit_time  : float = 15.0, 
+                       max_fit_steps : int = 5000,
+                       threads : int = 1):
+        """
+            Initialises the genetic algorithm
 
         Args:
-            no_inv  (int)   : Number of individuals
-            no_gen  (int)   : Number of generations
-            max_fit (float) : Max evaluation time for the fitness function. If exceeded fitness func is terminated early. 
-            threads (int)   : Number of threads used to evaluate the fitness function.
+            no_inv (int)         : Number of individuals.
+            no_gen (int)         : Number of generations.
+            parents_frac (float) : Fraction of all individuals chosen for mating. 
+            max_fit_steps (int)  : Max number of steps made in a fitness function.
+            max_fit_time (float) : Max evaluation time for the fitness function. If exceeded fitness func is terminated early. 
+            threads (int)        : Number of threads used to evaluate the fitness function.
         """
         self.no_inv = no_inv
         self.no_gen = no_gen
-        self.last_fitness = 0 
-        self.env = OCAtari("Tennis-v4", mode="ram", hud=True, render_mode=None) # faw.FixedAtariWrapper(gym.make('ALE/Tennis-v5', render_mode=None)) # # Tennis-v4
-        
-        obs, info = self.env.reset()
-        obs, reward, terminated, truncated, info = self.env.step(0)
+        initial_population = self.init_population(no_inv)
 
-        self.game_objs = dict()
-        self.game_ram_state = self.extract_game_info(self.env)
-
-        initial_population = [] # not pygad.nn unfortunately, but the Individual class, because of supervised learning
-        for i in range(self.no_inv):
-            individual = Individual(state=self.game_ram_state)
-            initial_population.append(individual.get_weights())
-        initial_population = np.array(initial_population)
-
-        self.max_fitness_time = max_fit # Maximal evaluation time of a fitness function
+        self.max_steps = max_fit_steps
+        self.max_fitness_time = max_fit_time
 
         if threads < 0: threads = 1
-        parents_mating = no_inv / 5
+        
+        parents_mating = int(no_inv * parents_frac)
         if parents_mating <= 1 : parents_mating = 2
 
         self.ga_instance = pygad.GA(
             num_generations=self.no_gen,
-            num_parents_mating=parents_mating, #4
-            initial_population=initial_population,#here an array or something of the individuals as vectors
+            num_parents_mating=parents_mating,     
+            initial_population=initial_population, # here an array or something of the individuals as vectors
             fitness_func=self.fitness_func, 
-            parent_selection_type="sss", # we can swap it by saying "custom" or something
+            parent_selection_type="sss",           # we can swap it by saying "custom" or something
             keep_parents=1,
-            crossover_type="single_point",
-            mutation_type="random",
-            mutation_percent_genes=10, #10
+            crossover_type="uniform",
+            mutation_type="random",              # Gaussian would be nbetter for Small shifts to existing weights instead of pure randomness
+            random_mutation_min_val=-0.15,
+            random_mutation_max_val=0.15,
+            mutation_by_replacement=False,
+            mutation_percent_genes=3,              # We don't want to alter the nn-s too much
             on_generation=self.on_generation,
             parallel_processing=threads
         )
+    
+    def init_population(self, no_inv):
+        '''
+            Creates the initial population based on self.NN_X, self.NN_Y.
+        '''
+        '''
+        local_env = OCWrapper(type="Tennis-v4", mode="ram", hud=True, render_mode=None)
+        local_env.reset()
+        local_env.step(0)
+        game_ram_state = self.extract_game_info(local_env)
+
+        initial_population = [] 
+        for i in range(self.no_inv):
+            individual = Individual(inputs_num=len(game_ram_state), n_y=10) 
+            initial_population.append(individual.get_weights())
+        return np.array(initial_population)
+        '''
+        initial_population = [] 
+        for i in range(self.no_inv):
+            individual = Individual(inputs_num=self.NN_X, n_y=self.NN_Y) 
+            initial_population.append(individual.get_weights())
+        return np.array(initial_population)
 
     def run(self):
         self.ga_instance.run()
-        self.env.close()
 
     # Not used, dunno how to
     def selection_function(self, fitness, num_parents, ga_instance):
@@ -155,133 +131,85 @@ class GeneticAlgorithm:
         print(f"Gen {self.ga_instance.generations_completed} -> best fitness {best_fit}")
         self.showcase_best(solution=best_sol)
 
-    def extract_game_info(self, env):
-
-        enemy_x, enemy_y = 0, 0
-        player_x, player_y = 0, 0
-        enemy_result, player_result = 0, 0
-        ball_x, ball_y = 0, 0
-        ball_vx, ball_vy = 0, 0
-        ball_v = 0
-
-        for obj in env.objects:
-            if obj.category == "Player":
-                player_x = obj.x
-                player_y = obj.y
-            elif obj.category == "Enemy":
-                enemy_x = obj.x
-                enemy_y = obj.y
-            elif obj.category == "Ball":
-                ball_x = obj.x
-                ball_y = obj.y
-                ball_vx = obj.x - obj.prev_xy[0]
-                ball_vy = obj.y - obj.prev_xy[1]
-                ball_v = np.sqrt(ball_vx ** 2 + ball_vy ** 2)
-
-        RAM = env.get_ram()
-        enemy_result = RAM[70]
-        player_result = RAM[69]
-
-        self.game_ram_state = np.array([
-            enemy_x, enemy_y,
-            player_x, player_y,
-            enemy_result, player_result,
-            ball_x, ball_y,
-            ball_vx, ball_vy,
-            ball_v
-        ], dtype=np.float32)
-
-        # Normalizing the value so that it does not drift too high up later
-        # self.game_ram_state /= 255.0
-
-        return self.game_ram_state
-
-    def get_ram_objects(self, env):
-        for obj in env.objects:
-                self.game_objs[obj.category.lower()] = obj
-        return self.game_objs
+        # Save best indivdual into a file
+        current_gen = ga_instance.generations_completed
+        if current_gen % 5 == 0:
+            INDIVIDUALS_PATH.mkdir(parents=True, exist_ok=True)
+            solution, solution_fitness, _ = ga_instance.best_solution(pop_fitness=ga_instance.last_generation_fitness)
+            solution_fitness = round(solution_fitness, 4)
+            np.save(INDIVIDUALS_PATH / f"gen-{current_gen}-fit-{solution_fitness}", arr=solution)
 
     def fitness_func(self, ga_instance, solution, sol_idx):
-        obs, info = self.env.reset()
-        obs, reward, terminated, truncated, info = self.env.step(1)
+        # 0. Prepare local env and the individual to evaluate
 
-        individual = Individual(self.extract_game_info(self.env))
+        local_env = OCWrapper(type="Tennis-v4", mode="ram", hud=True, render_mode="human") # render_mode=None "human"
+        obs, info = local_env.reset()
+        obs, reward, terminated, truncated, info = local_env.step(1)
+
+        individual = Individual(inputs_num=self.NN_X, n_y=self.NN_Y)
         individual.set_weights(solution)
-
-        service_now = True 
-
-        deadlock_counter = 0
-
-        def detect_deadlock(env, objs):
-            ''' It's supposed to counter error when player runs of in random direction before serving the ball. '''
-            nonlocal deadlock_counter
-
-            if "ball" in objs.keys():
-                ball = objs["ball"]
-            else:
-                print("No ball among objects, skipping")
-                return False
-            
-            if "player" in objs.keys():
-                player = objs["player"]
-            else:
-                print("No player detected")
-                return False
-
-            if ball.prev_xy[0] == ball.x and player.prev_xy == (player.x, player.y):
-                deadlock_counter += 1
-
-            if deadlock_counter == 100:
-                print("Detected deadlock")
-                if ball.x >= 0 and ball.y >= 0:
-                    print("Setting ram")
-                    env.set_ram(26, ball.x)
-                    env.set_ram(24, ball.y)
-                    deadlock_counter = 0
-                    return True
-            return False
 
         print("\n\nNew Individual\n\n")
 
-        player_total_score    = 0
+        # 1. Evaluation metrics
+
+        player_total_score    = 0 
         enemy_total_score     = 0
-        total_missed_distance = [1.0] # Total accumulated distance between player and the ball at the moment player lost it
-        total_missed_cos      = [0.0] # Total cos of angle between player movement direction and the vector from player to the balls position
-        previous_ram          = copy.deepcopy(self.env.get_ram())
-        total_time = 0                # Runtime of the fitness function
+        total_missed_distance = []      # Average distance between player and ball at the moment player loses ability to succefully return it to the opponent
+        avg_player_ball_dist  = []      # Average distance between the player and the ball through out the whole game
+        
+        # total_missed_cos      = []      # Total cos of angle between player movement direction and the vector from player to the balls position
+        previous_ram          = copy.deepcopy(local_env.get_ram())
+        total_time   = 0                # Runtime of the fitness function
         step_counter = 0
 
+        service_now = True              # Should the NN make service unconditionally now?
+        start_time = time.time()
+
         while not (terminated or truncated):
-            start_time = time.time()
             step_counter += 1
 
+            local_game_ram_state = local_env.extract_game_info()
+            objs = local_env.get_ram_objects()
+            RAM = local_env.get_ram()
+
+            action = individual.forward(new_state=local_game_ram_state, first_move=service_now)
+            obs, reward, terminated, truncated, info = local_env.step(action)
+
+            #-1. Detect successfull service
             if service_now:
-                action = 1
-                service_now = False
-            else:
-                action = individual.forward(new_state=self.game_ram_state)
+                if local_env.ball_started_moving():
+                    service_now = False
 
-            obs, reward, terminated, truncated, info = self.env.step(action)
+            # -------------------- Metrics calculation -------------------- #
 
-            self.game_ram_state = self.extract_game_info(self.env)
-            objs = self.get_ram_objects(self.env)
+            # 0. If ball is flying towards the player, check if the player is closing in on the ball
+            if 'ball' in objs.keys():
+                ball   = objs['ball']
+                player = objs['player']
+                ball_vy = ball.y - ball.prev_xy[1]
+                if ball_vy > 0:
+                    dist = local_env.obj_dist(ball, player) / local_env.MAX_DIST # (objs['ball'], objs['player']) / self.MAX_DIST
+                    avg_player_ball_dist.append(dist)
 
-            RAM = self.env.get_ram()
-
-            if RAM[self.PL_RAM_IDX] > previous_ram[self.PL_RAM_IDX] and service_now == False:
+            # 1. Check if players score changed
+            if RAM[local_env.PLAYER_RAM_SCORE] > previous_ram[local_env.PLAYER_RAM_SCORE] and service_now == False:
                 service_now = True
                 player_total_score += 1
 
-            if RAM[self.EN_RAM_IDX] > previous_ram[self.EN_RAM_IDX] and service_now == False:
+            # 2. Check if player should be serving in the next round
+            # 3. Check player movement direction
+            if RAM[local_env.ENENEMY_RAM_SCORE] > previous_ram[local_env.ENENEMY_RAM_SCORE] and service_now == False:
                 service_now = True
                 enemy_total_score += 1 
 
+                '''
                 player = objs["player"]
                 ball   = objs["ball"]
 
                 dx = ball.x - player.x
                 dy = ball.y - player.y
-                ball_player_dist = ((dx ** 2 + dy ** 2) ** 0.5) / self.MAX_BALL_PLAYER_DIST
+                ball_player_dist = ((dx ** 2 + dy ** 2) ** 0.5) / local_env.MAX_BALL_PLAYER_DIST
                 total_missed_distance.append(ball_player_dist)
 
                 dx_p = player.x - player.prev_xy[0]
@@ -290,34 +218,74 @@ class GeneticAlgorithm:
                 b = np.asarray([dx, dy])
                 c = np.dot(p, b) / (np.linalg.norm(p) * np.linalg.norm(b)) if (np.all(b != 0) and np.all(p != 0)) else 0.0
                 total_missed_cos.append(c)
+                '''
 
-                if detect_deadlock(self.env, objs):
-                    service_now = True
+            # 4. Detect deadlock
+            if local_env.detect_deadlock():
+                service_now = True
 
-            previous_ram = copy.deepcopy(self.env.get_ram()) 
+            previous_ram = copy.deepcopy(local_env.get_ram()) 
+            total_time = time.time() - start_time
 
-            total_time += (time.time() - start_time)
-
-            if total_time > self.max_fitness_time:
+            # 5. Count steps & measure total exec time
+            if total_time >= self.max_fitness_time:
                 print(f"Terminating early: individual exceeded time budget ({total_time:.2f}s)")
                 break
-                
-            if step_counter > 5000:
-                print("Terminating early: hit max safety step threshold (5000 frames)")
+            if step_counter >= self.max_steps:
+                print(f"Terminating early: hit max safety step threshold ({self.max_steps} steps)")
                 break
 
-        total_missed_distance = sum(total_missed_distance) / len(total_missed_distance)
-        total_missed_cos = sum(total_missed_cos) / len(total_missed_cos)
-        player_success_fraction = player_total_score / (player_total_score + enemy_total_score)
+        # 6. Normalize metrics
 
-        print(f"total missed distance: {total_missed_distance}")
-        print(f"total missed cos:      {total_missed_cos}")
-        print(f"player success frac:   {player_success_fraction}")
+        if len(total_missed_distance) != 0:
+            total_missed_distance = sum(total_missed_distance) / len(total_missed_distance)
+        else:
+            total_missed_distance = 0
 
-        f = player_success_fraction + (1.0 - total_missed_distance) + total_missed_cos
+        if len(avg_player_ball_dist) != 0:
+            avg_player_ball_dist = sum(avg_player_ball_dist) / len(avg_player_ball_dist)
+        else:
+            avg_player_ball_dist = 0
 
+        '''
+        if len(total_missed_cos) != 0:
+            total_missed_cos = sum(total_missed_cos) / len(total_missed_cos)
+        else:
+            total_missed_cos = 0
+        '''
+
+        if player_total_score != 0 or enemy_total_score !=0:
+            player_success_fraction = player_total_score / (player_total_score + enemy_total_score)
+        else:
+            player_success_fraction = 0
+
+        # 7. Omit deadlocks & loops
+        if step_counter < self.max_steps or player_total_score > 0:
+            total_frames_survived = step_counter / self.max_steps
+        else: 
+            total_frames_survived = 0
+
+    #    print(f"total missed distance:  {total_missed_distance}")
+    #    print(f"avg player ball dist:   {avg_player_ball_dist}")
+    #    print(f"total missed cos:       {total_missed_cos}")
+    #    print(f"player success frac:    {player_success_fraction}")
+    #    print(f"totatl survived frames: {total_frames_survived}")
+
+        # 8. Calculate fitness
+
+        current_gen = ga_instance.generations_completed
+
+        f = (1.0 - avg_player_ball_dist) # + total_frames_survived + (1.0 - total_missed_distance) + player_success_fraction # total_missed_cos 
+        
+        if current_gen > 10:
+            f += total_frames_survived
+        if current_gen > 20:
+            f += 1.0 - total_missed_distance
+        if current_gen > 30:
+            f += player_success_fraction
+        
         print(f"Fitness: {f}")
-        return f #player_won_fraction # For now just return the percentage of won points
+        return f 
 
     def showcase_best(self, solution):
         '''

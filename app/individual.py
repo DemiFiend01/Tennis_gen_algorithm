@@ -24,20 +24,22 @@ ball_dir_y
 '''
 
 class Individual:
-    def __init__(self, state, n_h1: int = 32, n_h2: int = 16, n_y: int = 18):
+    # MODIFIED state -> inputs_num
+    def __init__(self, inputs_num : int, n_h1: int = 32, n_h2: int = 16, n_y: int = 18):
         """Initializes an individual in a neural network.
 
         Args:
-            state (_type_): Inputs in form of info from RAM and calculated values.
-            n_h1 (int): Number of nodes in hidden layer 1
-            n_h2 (int): Number of nodes in hidden layer 2
-            n_y (int): Number of output nodes aka game inputs. Defaults to 18.
+            state      (_type_): (deprecated) Inputs in form of info from RAM and calculated values.
+            inputs_num (int): Number of inputs to the NN.
+            n_h1       (int): Number of nodes in hidden layer 1.
+            n_h2       (int): Number of nodes in hidden layer 2.
+            n_y        (int): Number of output nodes aka game inputs. Defaults to 18.
         """
         self.fitness = 0 # Remove?
         # Inputs
-        self.state = state
+        # self.state = state # COMMENTED
         # Nodes in the input layer
-        self.n_x = len(state)
+        self.n_x = inputs_num #len(state)
         self.n_h1 = n_h1
         self.n_h2 = n_h2
         self.n_y = n_y
@@ -51,10 +53,16 @@ class Individual:
         self.W2 = np.random.randn(self.n_h1, self.n_h2) * xavier_init
         self.W3 = np.random.randn(self.n_h2, self.n_y) * xavier_init
 
-    def forward(self, new_state):
-        self.state = new_state
+    def forward(self, new_state, first_move=False):
+        #self.state = new_state # COMMENTED
+
+        # Service during the first move
+        if first_move:
+            #print("First move")
+            return 1
+        
         # Inputs vector multiplication by the first weights matrix
-        h1 = np.maximum(0, self.state @ self.W1 ) # ReLU
+        h1 = np.maximum(0, new_state @ self.W1 ) # ReLU # CHANGE self.state -> new_state
         # First hidden layer matrix multiplication by the second weights matrix
         h2 = np.maximum(0, h1 @ self.W2) # ReLU
 
@@ -62,10 +70,11 @@ class Individual:
         x = h2 @ self.W3
         e_x = np.exp(x - np.max(x))
         softmax = e_x / e_x.sum()
+
+        outcome = int(np.argmax(softmax))
+        outcome += 1 # Omit NOOP
        
-        if np.random.rand() < 0.3: # 30% exploration rate
-            return np.random.randint(0, self.n_y)
-        return int(np.argmax(softmax))
+        return outcome #int(np.argmax(softmax))
        
        #return int(np.argmax(softmax))
 
