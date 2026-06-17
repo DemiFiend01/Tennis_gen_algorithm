@@ -142,7 +142,7 @@ class GeneticAlgorithm:
     def fitness_func(self, ga_instance, solution, sol_idx):
         # 0. Prepare local env and the individual to evaluate
 
-        local_env = OCWrapper(type="Tennis-v4", mode="ram", hud=True, render_mode="human") # render_mode=None "human"
+        local_env = OCWrapper(type="Tennis-v4", mode="ram", hud=True, render_mode=None) # render_mode=None "human"
         obs, info = local_env.reset()
         obs, reward, terminated, truncated, info = local_env.step(1)
 

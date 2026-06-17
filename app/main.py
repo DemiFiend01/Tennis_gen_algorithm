@@ -38,7 +38,7 @@ def test():
     env.close()
 
 if __name__ == '__main__':
-    genAlg = GeneticAlgorithm(no_inv=60, no_gen=60, threads=1, parents_frac=0.2)
+    genAlg = GeneticAlgorithm(no_inv=60, no_gen=60, threads=8, parents_frac=0.2)
     genAlg.run()
 
     genAlg.ga_instance.plot_fitness()
