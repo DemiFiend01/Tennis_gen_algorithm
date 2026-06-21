@@ -1,0 +1,15 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{Print} \PYG{n}{best} \PYG{n}{fitness} \PYG{n}{of} \PYG{n}{current} \PYG{n}{generation}
+
+\PYG{n}{IF} \PYG{n}{generation} \PYG{n}{MOD} \PYG{l+m+mi}{5} \PYG{o}{=} \PYG{l+m+mi}{0} \PYG{n}{THEN}
+	\PYG{n}{Save} \PYG{n}{best} \PYG{n}{weight} \PYG{n}{vector} \PYG{n}{to} \PYG{o}{/}\PYG{n}{tmp}\PYG{o}{/}\PYG{n}{best\PYGZus{}fits}\PYG{o}{/}\PYG{n}{gen}\PYG{o}{\PYGZhy{}}\PYG{p}{\PYGZob{}}\PYG{n}{g}\PYG{p}{\PYGZcb{}}\PYG{o}{\PYGZhy{}}\PYG{n}{fit}\PYG{o}{\PYGZhy{}}\PYG{p}{\PYGZob{}}\PYG{n}{f}\PYG{p}{\PYGZcb{}}\PYG{o}{.}\PYG{n}{npy}
+\PYG{n}{END} \PYG{n}{IF}
+
+\PYG{n}{Rank} \PYG{n}{population} \PYG{n}{by} \PYG{n}{fitness}
+\PYG{n}{elite} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{top}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{n}{individual}  \PYG{p}{(}\PYG{n}{preserved} \PYG{n}{unchanged}\PYG{p}{)}
+
+\PYG{n}{parents\PYGZus{}mating} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{floor}\PYG{p}{(}\PYG{n}{no\PYGZus{}inv} \PYG{n}{x} \PYG{n}{parents\PYGZus{}frac}\PYG{p}{)}
+\PYG{n}{parents} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{SSS\PYGZus{}select}\PYG{p}{(}\PYG{n}{population}\PYG{p}{,} \PYG{n}{parents\PYGZus{}mating}\PYG{p}{)}
+
+\PYG{n}{new\PYGZus{}population} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{p}{[}\PYG{n}{elite}\PYG{p}{]}
+\end{MintedVerbatim}

@@ -1,0 +1,18 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+		\PYG{n}{Track} \PYG{n}{metrics}\PYG{p}{:}
+			\PYG{n}{avg\PYGZus{}player\PYGZus{}ball\PYGZus{}dist}  \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{distance}\PYG{p}{(}\PYG{n}{player}\PYG{p}{,} \PYG{n}{ball}\PYG{p}{)}
+				\PYG{n}{when} \PYG{n}{ball} \PYG{n}{moves} \PYG{n}{toward} \PYG{n}{player}
+			\PYG{n}{player\PYGZus{}score}\PYG{p}{,} \PYG{n}{enemy\PYGZus{}score}
+			\PYG{n}{step\PYGZus{}counter} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{step\PYGZus{}counter} \PYG{o}{+} \PYG{l+m+mi}{1}
+
+		\PYG{n}{IF} \PYG{n}{score} \PYG{n}{changed} \PYG{n}{OR} \PYG{n}{deadlock} \PYG{n}{detected} \PYG{n}{THEN}
+			\PYG{n}{service\PYGZus{}now} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{k+kc}{True}
+		\PYG{n}{END} \PYG{n}{IF}
+
+		\PYG{n}{IF} \PYG{n}{elapsed\PYGZus{}time} \PYG{o}{\PYGZgt{}=} \PYG{n}{max\PYGZus{}time}
+			\PYG{n}{OR} \PYG{n}{step\PYGZus{}counter} \PYG{o}{\PYGZgt{}=} \PYG{n}{max\PYGZus{}steps} \PYG{n}{THEN}
+			\PYG{n}{BREAK}  \PYG{p}{(}\PYG{n}{early} \PYG{n}{termination}\PYG{p}{)}
+		\PYG{n}{END} \PYG{n}{IF}
+
+		\PYG{n}{END} \PYG{n}{WHILE}
+\end{MintedVerbatim}

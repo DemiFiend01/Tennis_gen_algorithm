@@ -1,0 +1,16 @@
+\frametitle{Pseudocode 6/6 - Selection, best result}
+		\begin{minted}[fontsize=\footnotesize,linenos,gobble=0]{python}
+Print best fitness of current generation
+
+IF generation MOD 5 = 0 THEN
+	Save best weight vector to /tmp/best_fits/gen-{g}-fit-{f}.npy
+END IF
+
+Rank population by fitness
+elite <- top-1 individual  (preserved unchanged)
+
+parents_mating <- floor(no_inv x parents_frac)
+parents <- SSS_select(population, parents_mating)
+
+new_population <- [elite]
+		\end{minted}

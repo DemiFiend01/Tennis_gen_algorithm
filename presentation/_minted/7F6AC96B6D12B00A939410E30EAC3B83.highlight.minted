@@ -1,0 +1,12 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{FUNCTION} \PYG{n}{init\PYGZus{}population}\PYG{p}{(}\PYG{n}{no\PYGZus{}inv}\PYG{p}{):}
+\PYG{n}{population} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{p}{[]}
+
+\PYG{n}{FOR} \PYG{n}{i} \PYG{o}{=} \PYG{l+m+mi}{1} \PYG{n}{TO} \PYG{n}{no\PYGZus{}inv} \PYG{n}{DO}
+	\PYG{n}{Build} \PYG{n}{NN} \PYG{k}{with} \PYG{n}{layers}\PYG{p}{:} \PYG{n}{n\PYGZus{}x}\PYG{o}{=}\PYG{l+m+mi}{11} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{h1}\PYG{o}{=}\PYG{l+m+mi}{32} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{h2}\PYG{o}{=}\PYG{l+m+mi}{16} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{n\PYGZus{}y}\PYG{o}{=}\PYG{l+m+mi}{10}
+	\PYG{n}{Xavier}\PYG{o}{\PYGZhy{}}\PYG{n}{init} \PYG{n}{weight} \PYG{n}{matrices} \PYG{n}{W1}\PYG{p}{,} \PYG{n}{W2}\PYG{p}{,} \PYG{n}{W3}
+	\PYG{n}{population}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{flatten}\PYG{p}{([}\PYG{n}{W1}\PYG{p}{,} \PYG{n}{W2}\PYG{p}{,} \PYG{n}{W3}\PYG{p}{]))}
+\PYG{n}{END} \PYG{n}{FOR}
+
+\PYG{n}{RETURN} \PYG{n}{population}
+\end{MintedVerbatim}

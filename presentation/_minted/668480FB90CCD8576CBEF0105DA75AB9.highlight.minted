@@ -1,0 +1,17 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+	\PYG{n}{WHILE} \PYG{o+ow}{not} \PYG{n}{terminated} \PYG{n}{DO}
+		\PYG{n}{state} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{extract} \PYG{l+m+mi}{11}\PYG{o}{\PYGZhy{}}\PYG{n}{value} \PYG{n}{game} \PYG{n}{state} \PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{RAM}
+		\PYG{n}{IF} \PYG{n}{service\PYGZus{}now} \PYG{n}{THEN}
+			\PYG{n}{action} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{l+m+mi}{1}  \PYG{p}{(}\PYG{n}{force} \PYG{n}{serve}\PYG{p}{)}
+			\PYG{n}{IF} \PYG{n}{ball} \PYG{n}{started} \PYG{n}{moving} \PYG{n}{THEN}
+				\PYG{n}{service\PYGZus{}now} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{k+kc}{False}
+			\PYG{n}{END} \PYG{n}{IF}
+
+		\PYG{n}{ELSE}
+			\PYG{n}{h1}     \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{ReLU}\PYG{p}{(}\PYG{n}{state} \PYG{o}{@} \PYG{n}{W1}\PYG{p}{)}
+			\PYG{n}{h2}     \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{ReLU}\PYG{p}{(}\PYG{n}{h1}    \PYG{o}{@} \PYG{n}{W2}\PYG{p}{)}
+			\PYG{n}{logits} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{h2} \PYG{o}{@} \PYG{n}{W3}
+			\PYG{n}{action} \PYG{o}{\PYGZlt{}\PYGZhy{}} \PYG{n}{argmax}\PYG{p}{(}\PYG{n}{softmax}\PYG{p}{(}\PYG{n}{logits}\PYG{p}{))} \PYG{o}{+} \PYG{l+m+mi}{1}
+		\PYG{n}{END} \PYG{n}{IF}
+		\PYG{n}{Execute} \PYG{n}{action} \PYG{o+ow}{in} \PYG{n}{env} \PYG{o}{\PYGZhy{}\PYGZgt{}} \PYG{n}{observe} \PYG{n}{RAM} \PYG{n}{delta}
+\end{MintedVerbatim}

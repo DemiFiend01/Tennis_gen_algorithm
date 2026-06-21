@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{Introduction to problem and environment}{3}{0}{1}
+\beamer@sectionintoc {2}{Flowchart}{4}{0}{2}
+\beamer@sectionintoc {3}{Pseudocode}{8}{0}{3}
+\beamer@sectionintoc {4}{Results}{14}{0}{4}

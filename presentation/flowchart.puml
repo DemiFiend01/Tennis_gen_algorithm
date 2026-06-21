@@ -1,0 +1,90 @@
+@startuml
+!theme plain
+skinparam ClassAttributeIconSize 0
+skinparam BackgroundColor #FAFAFA
+skinparam RoundCorner 20
+skinparam class {
+  BorderColor #16342c
+  BackgroundColor #edfdf8
+  HeaderBackgroundColor #6aa8b8
+  ArrowColor #24768b
+}
+skinparam note {
+  BackgroundColor #edfdf8
+  BorderColor #24768b
+  FontSize 11
+}
+
+title Tennis Genetic Algorithm Flowchart\n
+
+start
+
+:__Init Population__\nFor each individual: build NN (11→32→16→10)\nXavier-init W1, W2, W3 → flatten to weight vector;
+note right
+  NN inputs (11):
+  enemy_x/y, player_x/y,
+  ball_x/y, scores,
+  ball_v, ball_dir_x/y
+end note
+
+:generation = 0;
+
+while (generation < no_gen?) is (yes)
+
+  :generation++;
+
+  partition "**Evaluate Population**" {
+    :Create OCAtari env (RAM, no render)\nRebuild each Individual; set service_now = True;
+    
+    while (not terminated?) is (yes)
+
+      :Extract 11-value game state from RAM;
+
+      if (service_now?) then (yes)
+        :action = 1 (serve)\nWait for ball to move;
+      else (no)
+        :NN Forward Pass\nh1=ReLU(state@W1), h2=ReLU(h1@W2)\naction = argmax(softmax(h2@W3)) + 1;
+      endif
+
+      :Execute action → observe RAM delta;
+
+      :Track metrics:\n• avg player<->ball dist (ball moving toward player)\n• player / enemy score\n• step_counter;
+
+      if (score changed\nor deadlock?) then (yes)
+        :service_now = True;
+      endif
+
+      if (time ≥ max_time\nor steps ≥ max_steps?) then (yes)
+        :Break early;
+        break
+      endif
+
+    endwhile (done)
+
+    :Compute progressive fitness f:\n  f = (1 − avg_dist)\n  gen>10 → f += frames_survived\n  gen>20 → f += (1 − missed_dist)\n  gen>30 → f += win_fraction;
+  }
+
+  partition "**On Generation**" {
+    :Print best fitness;
+    if (generation % 5 == 0?) then (yes)
+      :Save best weights to /tmp/best_fits/;
+    endif
+  }
+
+  partition "**Selection → Crossover → Mutation**" {
+    :Rank by fitness\nKeep top-1 elite (elitism)\nSSS: select parents_mating parents;
+
+    :Uniform crossover:\neach gene inherited from parent A or B;
+
+    :Random mutation:\ngene += uniform(−0.15, 0.15)\nfor mutation_percent_genes % of genes;
+
+    :Replace population with new offspring;
+  }
+
+endwhile (no)
+
+:Return best individual\n(highest fitness weight vector);
+
+stop
+
+@enduml
