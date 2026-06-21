@@ -1,4 +1,5 @@
 import numpy as np
+from pathlib import Path
 
 ''' Input layer:
 enemy_x
@@ -39,19 +40,40 @@ class Individual:
         # Inputs
         # self.state = state # COMMENTED
         # Nodes in the input layer
-        self.n_x = inputs_num #len(state)
+        self.n_x  = inputs_num #len(state)
         self.n_h1 = n_h1
         self.n_h2 = n_h2
-        self.n_y = n_y
+        self.n_y  = n_y
 
         #Extract the actual state values without labels, but in the genetic_algorithm
         #because right now we have {'enemy_x': 62, 'enemy_y': 2, 'enemy_score': 0, 'ball_x': 71, 'ball_y': 33, 'player_x': 64, 'player_y': 142, 'player_score': 0}
 
         # Weights matrices initialization with the Xavier init.
         xavier_init = np.sqrt(1/self.n_x)
-        self.W1 = np.random.randn(self.n_x, self.n_h1) * xavier_init
+        self.W1 = np.random.randn(self.n_x, self.n_h1)  * xavier_init
         self.W2 = np.random.randn(self.n_h1, self.n_h2) * xavier_init
-        self.W3 = np.random.randn(self.n_h2, self.n_y) * xavier_init
+        self.W3 = np.random.randn(self.n_h2, self.n_y)  * xavier_init
+
+    def from_npy(self, src : Path | str) -> Individual | None:
+        ''' Creates an individual using data from given source file. '''
+
+        if type(src) is str:
+            src = Path(src).resolve()
+            if not src.is_file():
+                print(f"File doesn't exist: {src}")
+                return None
+
+        data = np.fromfile(src)
+
+        n_1 = self.n_x * self.n_h1
+        n_2 = self.n_h1 * self.n_h2
+        n_3 = self.n_h2 * self.n_hy
+
+        self.W1 = data[0   : n_1]
+        self.W2 = data[n_1 : n_2]
+        self.W3 = data[n_2 : n_3]
+
+        return self
 
     def forward(self, new_state, first_move=False):
         #self.state = new_state # COMMENTED
