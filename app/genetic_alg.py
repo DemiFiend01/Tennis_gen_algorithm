@@ -5,12 +5,10 @@ import ale_py
 import gymnasium as gym
 from individual import Individual
 import numpy as np
-import copy
-import time
-import random
+import copy, time, random, math, re
 from ocatari.core import OCAtari
 from ocatari.ram.game_objects import GameObject
-import math
+
 
 from OCWrapper import OCWrapper
 from pathlib import Path
@@ -133,7 +131,7 @@ class GeneticAlgorithm:
 
         # Save best indivdual into a file
         current_gen = ga_instance.generations_completed
-        if current_gen % 5 == 0:
+        if current_gen % 2 == 0:
             INDIVIDUALS_PATH.mkdir(parents=True, exist_ok=True)
             solution, solution_fitness, _ = ga_instance.best_solution(pop_fitness=ga_instance.last_generation_fitness)
             solution_fitness = round(solution_fitness, 4)

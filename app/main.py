@@ -5,7 +5,8 @@ from time import sleep
 
 from tutorial import Tutorial
 from user import tennis_playable
-from genetic_alg import GeneticAlgorithm
+from genetic_alg import GeneticAlgorithm, INDIVIDUALS_PATH
+from TestEnv import TestEnv
 
 def test():
     # Using wrapper to a wrapper due to version differences
@@ -38,11 +39,13 @@ def test():
     env.close()
 
 if __name__ == '__main__':
-    genAlg = GeneticAlgorithm(no_inv=60, no_gen=60, threads=8, parents_frac=0.2)
+    genAlg = GeneticAlgorithm(no_inv=8, no_gen=4, threads=8, parents_frac=0.2)
     genAlg.run()
-
     genAlg.ga_instance.plot_fitness()
-   
+
+    test_env = TestEnv(INDIVIDUALS_PATH)
+    test_env.start()
+
     #tutorial = Tutorial()
     #tutorial.run()
     #tennis_playable()

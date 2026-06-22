@@ -54,7 +54,7 @@ class Individual:
         self.W2 = np.random.randn(self.n_h1, self.n_h2) * xavier_init
         self.W3 = np.random.randn(self.n_h2, self.n_y)  * xavier_init
 
-    def from_npy(self, src : Path | str) -> Individual | None:
+    def from_npy(self, src : Path | str):
         ''' Creates an individual using data from given source file. '''
 
         if type(src) is str:
@@ -63,15 +63,18 @@ class Individual:
                 print(f"File doesn't exist: {src}")
                 return None
 
-        data = np.fromfile(src)
+        data = np.load(src, allow_pickle=True)
 
         n_1 = self.n_x * self.n_h1
-        n_2 = self.n_h1 * self.n_h2
-        n_3 = self.n_h2 * self.n_hy
+        n_2 = n_1 + self.n_h1 * self.n_h2
+        n_3 = n_2 + self.n_h2 * self.n_y
 
         self.W1 = data[0   : n_1]
+        np.reshape(self.W1, (self.n_x, self.n_h1))
         self.W2 = data[n_1 : n_2]
+        np.reshape(self.W2, (self.n_h1, self.n_h2))
         self.W3 = data[n_2 : n_3]
+        np.reshape(self.W3, (self.n_h2, self.n_y))
 
         return self
 
