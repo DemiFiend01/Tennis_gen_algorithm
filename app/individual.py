@@ -69,12 +69,15 @@ class Individual:
         n_2 = n_1 + self.n_h1 * self.n_h2
         n_3 = n_2 + self.n_h2 * self.n_y
 
-        self.W1 = data[0   : n_1]
-        np.reshape(self.W1, (self.n_x, self.n_h1))
-        self.W2 = data[n_1 : n_2]
-        np.reshape(self.W2, (self.n_h1, self.n_h2))
-        self.W3 = data[n_2 : n_3]
-        np.reshape(self.W3, (self.n_h2, self.n_y))
+        # self.W1 = data[0   : n_1]
+        # np.reshape(self.W1, (self.n_x, self.n_h1))
+        # self.W2 = data[n_1 : n_2]
+        # np.reshape(self.W2, (self.n_h1, self.n_h2))
+        # self.W3 = data[n_2 : n_3]
+        # np.reshape(self.W3, (self.n_h2, self.n_y))
+        self.W1 = np.reshape(data[0   : n_1], (self.n_x, self.n_h1))
+        self.W2 = np.reshape(data[n_1 : n_2], (self.n_h1, self.n_h2))
+        self.W3 = np.reshape(data[n_2 : n_3], (self.n_h2, self.n_y))
 
         return self
 

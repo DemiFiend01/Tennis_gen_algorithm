@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.6.19)  21 JUN 2026 02:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.6.23)  23 JUN 2026 20:15
 entering extended mode
- \write18 enabled.
+ restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**d:/Studia/6th_semester/BIAI/Tennis_gen_algorithm/presentation/presentation.tex
-(d:/Studia/6th_semester/BIAI/Tennis_gen_algorithm/presentation/presentation.tex
+**"d:/Studia/Sem VI/BIAI_project/presentation/presentation.tex"
+(d:/Studia/Sem VI/BIAI_project/presentation/presentation.tex
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
 (C:\Program Files\MiKTeX\tex/latex/beamer\beamer.cls
@@ -633,7 +633,7 @@ Package: pgfopts 2014/07/10 v2.1a LaTeX package options with pgfkeys
 \pgfopts@list@add@b@toks=\toks51
 ) (C:\Program Files\MiKTeX\tex/latex/tools\shellesc.sty
 Package: shellesc 2023/07/08 v1.0d unified shell escape interface for LaTeX
-Package shellesc Info: Unrestricted shell escape enabled on input line 75.
+Package shellesc Info: Restricted shell escape enabled on input line 77.
 ) (C:\Program Files\MiKTeX\tex/latex/float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \c@float@type=\count392
@@ -729,7 +729,6 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package hyperref Info: Link coloring OFF on input line 15.
- (presentation.out) (presentation.out)
 \@outlinefile=\write6
 \openout6 = `presentation.out'.
 
@@ -817,12 +816,13 @@ Overfull \hbox (32.75018pt too wide) has occurred while \output is active
 
 [1
 
-{C:/Users/maggi/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+{C:/Users/Magdalena/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 Overfull \hbox (32.75018pt too wide) in paragraph at lines 22--22
  [][]  \T1/cmss/m/n/6 ([])  
  []
 
-(presentation.toc)
+No file presentation.toc.
+
 Overfull \hbox (32.75018pt too wide) has occurred while \output is active
  [][]  \T1/cmss/m/n/6 ([])  
  []
@@ -846,7 +846,7 @@ LaTeX Font Info:    Trying to load font information for OT1+mathkerncmss on inpu
  (C:\Program Files\MiKTeX\tex/latex/sansmathaccent\ot1mathkerncmss.fd
 File: ot1mathkerncmss.fd 2020/01/31 Fontinst v1.933 font definitions for OT1/mathkerncmss.
 )
-<tennis.png, id=113, 645.41125pt x 529.98pt>
+<tennis.png, id=89, 645.41125pt x 529.98pt>
 File: tennis.png Graphic file (type png)
 <use tennis.png>
 Package pdftex.def Info: tennis.png  used on input line 45.
@@ -859,7 +859,7 @@ Overfull \hbox (32.75018pt too wide) has occurred while \output is active
 [3
 
  <./tennis.png>]
-<flowchart1.png, id=143, 460.72125pt x 377.91188pt>
+<flowchart1.png, id=121, 460.72125pt x 377.91188pt>
 File: flowchart1.png Graphic file (type png)
 <use flowchart1.png>
 Package pdftex.def Info: flowchart1.png  used on input line 56.
@@ -871,7 +871,7 @@ Overfull \vbox (3.72305pt too high) detected at line 56
 [4
 
  <./flowchart1.png>]
-<flowchart2.png, id=171, 460.72125pt x 377.91188pt>
+<flowchart2.png, id=151, 460.72125pt x 377.91188pt>
 File: flowchart2.png Graphic file (type png)
 <use flowchart2.png>
 Package pdftex.def Info: flowchart2.png  used on input line 56.
@@ -883,7 +883,7 @@ Overfull \vbox (3.72305pt too high) detected at line 56
 [5
 
  <./flowchart2.png>]
-<flowchart3.png, id=198, 460.72125pt x 377.91188pt>
+<flowchart3.png, id=178, 460.72125pt x 377.91188pt>
 File: flowchart3.png Graphic file (type png)
 <use flowchart3.png>
 Package pdftex.def Info: flowchart3.png  used on input line 56.
@@ -895,7 +895,7 @@ Overfull \vbox (3.72305pt too high) detected at line 56
 [6
 
  <./flowchart3.png>]
-<flowchart4.png, id=224, 460.72125pt x 377.91188pt>
+<flowchart4.png, id=204, 460.72125pt x 377.91188pt>
 File: flowchart4.png Graphic file (type png)
 <use flowchart4.png>
 Package pdftex.def Info: flowchart4.png  used on input line 56.
@@ -922,12 +922,24 @@ Overfull \hbox (32.75018pt too wide) in paragraph at lines 73--73
 \pydata@fh@0=\write7
 \openout7 = `_2486923A98E77FD0740381D01ACD1782.data.minted'.
 
-runsystem(latexminted config  --timestamp 20260621020352 2486923A98E77FD0740381D01ACD1782)...executed.
+runsystem(latexminted config  --timestamp 20260623201508 2486923A98E77FD0740381D01ACD1782)...disabled (restricted).
 
- (_2486923A98E77FD0740381D01ACD1782.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20260621020352 2486923A98E77FD0740381D01ACD1782)...executed.
 
- (_minted/default.style.minted) (_minted/7F6AC96B6D12B00A939410E30EAC3B83.highlight.minted
+
+presentation.vrb:13: Package minted Error: minted v3+ executable is not installed, is not added to PATH, or is not permitted with restricted shell escape; or MiKTeX is being used with -aux-directory or -output-directory without setting a TEXMF_OUTPUT_DIRECTORY environment variable.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.13 		\end{minted}
+                   
+This error message was generated by an \errmessage
+command, so I can't give any explicit help.
+Pretend that you're Hercule Poirot: Examine all clues,
+and deduce the truth by order and method.
+
+(_minted/default.style.minted) (_minted/7F6AC96B6D12B00A939410E30EAC3B83.highlight.minted
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <9> not available
 (Font)              Font shape `T1/cmtt/m/n' tried instead on input line 6.
 ))
@@ -1037,7 +1049,7 @@ Overfull \hbox (32.75018pt too wide) in paragraph at lines 173--173
  [][]  \T1/cmss/m/n/6 ([])  
  []
 
-<results.png, id=422, 916.42375pt x 718.685pt>
+<results.png, id=403, 916.42375pt x 718.685pt>
 File: results.png Graphic file (type png)
 <use results.png>
 Package pdftex.def Info: results.png  used on input line 173.
@@ -1064,21 +1076,31 @@ Overfull \hbox (32.75018pt too wide) has occurred while \output is active
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-05-26>
  ***********
-Package rerunfilecheck Info: File `presentation.out' has not changed.
-(rerunfilecheck)             Checksum: 1BFE5B88093165826F13D156C995DF54;509.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `presentation.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `presentation.out':
+(rerunfilecheck)             Before: <no file>
+(rerunfilecheck)             After:  1BFE5B88093165826F13D156C995DF54;509.
  ) 
 Here is how much of TeX's memory you used:
- 28018 strings out of 467508
- 570969 string characters out of 5418868
- 1057870 words of memory out of 5000000
- 56660 multiletter control sequences out of 15000+600000
+ 27960 strings out of 467508
+ 568745 string characters out of 5418856
+ 1057648 words of memory out of 5000000
+ 56611 multiletter control sequences out of 15000+600000
  641086 words of font info for 72 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 128i,15n,123p,521b,789s stack positions out of 10000i,1000n,20000p,200000b,200000s
- <C:\Users\maggi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\maggi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0600.pk> <C:\Users\maggi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss1000.pk> <C:\Users\maggi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0600.pk> <C:\Users\maggi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0800.pk> <C:\Users\maggi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss1095.pk> <C:\Users\maggi\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss1440.pk>
-Output written on presentation.pdf (14 pages, 312506 bytes).
+ 128i,15n,123p,504b,789s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\Magdalena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt0900.pk> <C:\Users\Magdalena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0600.pk> <C:\Users\Magdalena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss1000.pk> <C:\Users\Magdalena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0600.pk> <C:\Users\Magdalena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss0800.pk> <C:\Users\Magdalena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss1095.pk> <C:\Users\Magdalena\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecss1440.pk>
+Output written on presentation.pdf (14 pages, 307534 bytes).
 PDF statistics:
- 721 PDF objects out of 1000 (max. 8388607)
+ 697 PDF objects out of 1000 (max. 8388607)
  35 named destinations out of 1000 (max. 500000)
- 153 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 115 words of extra memory for PDF output out of 10000 (max. 10000000)
 

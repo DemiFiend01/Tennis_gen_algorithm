@@ -19,12 +19,9 @@ https://sourceforge.net/projects/vcxsrv/
 - [x] Create skeleton of the algorithm
 - [x] Dummy fitness function
 
-- [ ] Fitness function
-      - [ ] Track metrics
-      - [ ] Prepare pattern
-      - [ ] Create chart of fitness values over time
-      - [ ] Implement whole function
-
-- [ ] Selection function
-      - [] Research it more
+- [x] Fitness function
+      - [x] Track metrics
+      - [x] Prepare pattern
+      - [x] Create chart of fitness values over time
+      - [x] Implement whole function
       

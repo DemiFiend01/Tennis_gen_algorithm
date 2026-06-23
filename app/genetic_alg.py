@@ -155,7 +155,9 @@ class GeneticAlgorithm:
         enemy_total_score     = 0
         total_missed_distance = []      # Average distance between player and ball at the moment player loses ability to succefully return it to the opponent
         avg_player_ball_dist  = []      # Average distance between the player and the ball through out the whole game
-        
+        move_it_move_it = 0.0
+        player_prev_pos = [ 0, 0]
+
         # total_missed_cos      = []      # Total cos of angle between player movement direction and the vector from player to the balls position
         previous_ram          = copy.deepcopy(local_env.get_ram())
         total_time   = 0                # Runtime of the fitness function
@@ -181,6 +183,7 @@ class GeneticAlgorithm:
 
             # -------------------- Metrics calculation -------------------- #
 
+            
             # 0. If ball is flying towards the player, check if the player is closing in on the ball
             if 'ball' in objs.keys():
                 ball   = objs['ball']
@@ -217,6 +220,13 @@ class GeneticAlgorithm:
                 c = np.dot(p, b) / (np.linalg.norm(p) * np.linalg.norm(b)) if (np.all(b != 0) and np.all(p != 0)) else 0.0
                 total_missed_cos.append(c)
                 '''
+            player_temp = objs['player']
+            if not service_now:
+                if not abs(player_temp.x - player_prev_pos[0]) and not abs(player_temp.y - player_prev_pos[1]):
+                    move_it_move_it += -0.1
+                else:
+                    move_it_move_it += 0.2
+            player_prev_pos = [player_temp.x, player_temp.y]
 
             # 4. Detect deadlock
             if local_env.detect_deadlock():
@@ -234,6 +244,8 @@ class GeneticAlgorithm:
                 break
 
         # 6. Normalize metrics
+        if step_counter != 0:
+            move_it_move_it = move_it_move_it / step_counter
 
         if len(total_missed_distance) != 0:
             total_missed_distance = sum(total_missed_distance) / len(total_missed_distance)
@@ -274,7 +286,8 @@ class GeneticAlgorithm:
         current_gen = ga_instance.generations_completed
 
         f = (1.0 - avg_player_ball_dist) # + total_frames_survived + (1.0 - total_missed_distance) + player_success_fraction # total_missed_cos 
-        
+        f += move_it_move_it
+        print(f"Move it: {move_it_move_it}")
         if current_gen > 10:
             f += total_frames_survived
         if current_gen > 20:
