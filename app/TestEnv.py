@@ -47,9 +47,14 @@ class TestEnv():
                 self.env.step(step)
                 if first_move and self.env.ball_started_moving():
                     first_move = False
-                first_move = not self.score_changed(ram, prev_ram, first_move)
+
+                if ((ram[self.env.PLAYER_RAM_SCORE] != prev_ram[self.env.PLAYER_RAM_SCORE] and not first_move) or 
+                    (ram[self.env.ENENEMY_RAM_SCORE] != prev_ram[self.env.ENENEMY_RAM_SCORE]) and not first_move):
+                    first_move = True
+                #if not first_move:
+                #    first_move = not self.score_changed(ram, prev_ram, first_move)
                 prev_ram = copy.deepcopy(ram) #copy.deepcopy(self.env.get_ram()) 
-                if self.env.detect_deadlock(): first_move = True
+                #if self.env.detect_deadlock(): first_move = True
         except KeyboardInterrupt:
             print("Exiting testing env.")
         finally:
